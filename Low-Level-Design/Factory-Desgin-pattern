@@ -1,0 +1,138 @@
+problem statment
+Imagine that you’re creating a logistics management application. The first version of your app can only handle transportation by trucks, so the bulk of your code lives inside the Truck class.
+
+After a while, your app becomes pretty popular. Each day you receive dozens of requests from sea transportation companies to incorporate sea logistics into the app.
+
+
+
+// The product interface
+
+// Without Factory Method
+
+class DecodedImage {
+    private String image;
+
+    public DecodedImage(String image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return image + ": is decoded";
+    }
+}
+
+class GifReader {
+    private DecodedImage decodedImage;
+
+    public GifReader(String image) {
+        this.decodedImage = new DecodedImage(image);
+    }
+
+    public DecodedImage getDecodeImage() {
+        return decodedImage;
+    }
+}
+
+class JpegReader {
+    private DecodedImage decodedImage;
+
+    public JpegReader(String image) {
+        this.decodedImage = new DecodedImage(image);
+    }
+
+    public DecodedImage getDecodeImage() {
+        return decodedImage;
+    }
+}
+
+public class SimpleDemo {
+    public static void main(String[] args) {
+        DecodedImage decodedImage;
+        String image = args[0];
+        String format = image.substring(image.indexOf('.') + 1);
+
+        if (format.equals("gif")) {
+            GifReader gifReader = new GifReader(image);
+            decodedImage = gifReader.getDecodeImage();
+        } else if (format.equals("jpeg")) {
+            JpegReader jpegReader = new JpegReader(image);
+            decodedImage = jpegReader.getDecodeImage();
+        } else {
+            throw new IllegalArgumentException("Unsupported image format");
+        }
+
+        System.out.println(decodedImage);
+    }
+}
+
+
+
+// with factory method
+
+interface ImageReader {
+    DecodedImage getDecodeImage();
+}
+
+class DecodedImage {
+    private String image;
+
+    public DecodedImage(String image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return image + ": is decoded";
+    }
+}
+
+class GifReader implements ImageReader {
+        private DecodedImage decodedImage;
+
+        public GifReader(String image) {
+            this.decodedImage = new DecodedImage(image);   
+        }
+
+    @Override
+    public DecodedImage getDecodeImage() {
+        return decodedImage;
+    }
+}
+
+class JpegReader implements ImageReader {
+    private DecodedImage decodedImage;
+
+    public JpegReader(String image) {
+        this.decodedImage = new DecodedImage(image);
+    }
+
+    @Override
+    public DecodedImage getDecodeImage() {
+        return decodedImage;
+    }
+}
+
+class ImageReaderFactory {
+    public static ImageReader getImageReader(String image) {
+        String format = image.substring(image.indexOf('.') + 1);
+
+        switch (format) {
+            case "gif":
+                return new GifReader(image);
+            case "jpeg":
+                return new JpegReader(image);
+            default:
+                throw new IllegalArgumentException("Unsupported image format");
+        }
+    }
+}
+
+public class FactoryMethodDemo {
+    public static void main(String[] args) {
+        String image = args[0];
+        ImageReader reader = ImageReaderFactory.getImageReader(image);
+        DecodedImage decodedImage = reader.getDecodeImage();
+        System.out.println(decodedImage);
+    }
+}
